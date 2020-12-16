@@ -59,8 +59,8 @@ then
   sed -i.bak "s@_HOST_@${ROUTE_HOST}@" ${MANIFESTS}/acmeair-mainservice-route.yaml
 fi
 
-kubectl apply -f ${MANIFESTS}
-
+#kubectl apply -f ${MANIFESTS}
+oc apply -f ${MANIFESTS}
 echo "Removing ${IMAGE_PREFIX}"
 sed -i.bak "s@${IMAGE_PREFIX}/acmeair-mainservice-java:latest@acmeair-mainservice-java:latest@" ${MANIFESTS}/deploy-acmeair-mainservice-java.yaml
 
@@ -88,8 +88,8 @@ then
   sed -i.bak "s@_HOST_@${ROUTE_HOST}@" ${MANIFESTS}/acmeair-authservice-route.yaml
 fi
 
-kubectl apply -f ${MANIFESTS}
-
+#kubectl apply -f ${MANIFESTS}
+oc apply  -f ${MANIFESTS}
 echo "Removing ${IMAGE_PREFIX}"
 sed -i.bak "s@${IMAGE_PREFIX}/acmeair-authservice-java:latest@acmeair-authservice-java:latest@" ${MANIFESTS}/deploy-acmeair-authservice-java.yaml
 
@@ -117,7 +117,8 @@ then
   sed -i.bak "s@_HOST_@${ROUTE_HOST}@" ${MANIFESTS}/acmeair-bookingservice-route.yaml
 fi
 
-kubectl apply -f ${MANIFESTS}
+#kubectl apply -f ${MANIFESTS}
+oc apply  -f ${MANIFESTS}
 
 echo "Removing ${IMAGE_PREFIX}"
 sed -i.bak "s@${IMAGE_PREFIX}/acmeair-bookingservice-java:latest@acmeair-bookingservice-java:latest@" ${MANIFESTS}/deploy-acmeair-bookingservice-java.yaml
@@ -148,8 +149,8 @@ then
   sed -i.bak "s@_HOST_@${ROUTE_HOST}@" ${MANIFESTS}/acmeair-customerservice-route.yaml
 fi
 
-kubectl apply -f ${MANIFESTS}
-
+#kubectl apply -f ${MANIFESTS}
+oc apply -f ${MANIFESTS}
 echo "Removing ${IMAGE_PREFIX}"
 sed -i.bak "s@${IMAGE_PREFIX}/acmeair-customerservice-java:latest@acmeair-customerservice-java:latest@" ${MANIFESTS}/deploy-acmeair-customerservice-java.yaml
 
@@ -177,7 +178,15 @@ then
   sed -i.bak "s@_HOST_@${ROUTE_HOST}@" ${MANIFESTS}/acmeair-flightservice-route.yaml
 fi
 
-kubectl apply -f ${MANIFESTS}
+ if [[ -z "${DB2FORI_HOSTNAME}" ]]; then
+   echo "DB2 For i Hostname not defined (export DB2FORI_HOSTNAME=<value>). Please Fix this or patch the ibmi-database service."
+ else
+   echo "Patching Service with IBM i domain name (cname not IP): ${DB2FORI_HOSTNAME}"
+   sed -i.bak "s@bendemo.10.7.19.71.nip.io@${DB2FORI_HOSTNAME}@" ${MANIFESTS}/deploy-acmeair-customerservice-java.yaml
+ fi
+
+#kubectl apply -f ${MANIFESTS}
+oc apply  -f ${MANIFESTS}
 
 echo "Removing ${IMAGE_PREFIX}"
 sed -i.bak "s@${IMAGE_PREFIX}/acmeair-flightservice-java:latest@acmeair-flightservice-java:latest@" ${MANIFESTS}/deploy-acmeair-flightservice-java.yaml
